@@ -52,4 +52,4 @@ def load_caffemodel():
 
     return pretrained_weights
 
-loca_caffemodel()
+load_caffemodel()
