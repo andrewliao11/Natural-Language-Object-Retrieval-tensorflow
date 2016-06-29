@@ -7,8 +7,8 @@ from __future__ import print_function
 # import caffe before tf, or segmentation fault
 #from initialize import load_caffemodel
 import sys
-sys.path.append('/home/andrewliao11/umbo/natural-language-object-retrieval/external/caffe-natural-language-object-retrieval/python/')
-sys.path.append('/home/andrewliao11/umbo/natural-language-object-retrieval/external/caffe-natural-language-object-retrieval/examples/coco_caption/')
+sys.path.append('./external/caffe-natural-language-object-retrieval/python/')
+sys.path.append('./external/caffe-natural-language-object-retrieval/examples/coco_caption/')
 import caffe
 from captioner import Captioner
 import tensorflow as tf
@@ -27,21 +27,21 @@ gpu_id = 0
 sample_im = 100
 
 # path
-context_feature_path = '/home/andrewliao11/umbo/natural-language-object-retrieval/data/referit_context_features'
-training_data_path = '/home/andrewliao11/umbo/natural-language-object-retrieval/data/training/50_training_data'
-vocab_file = '/home/andrewliao11/umbo/natural-language-object-retrieval/data/vocabulary.txt'
-test_imlist_path = '/home/andrewliao11/umbo/natural-language-object-retrieval/data/split/referit_test_imlist.txt'
-test_imcrop_dict_path = '/home/andrewliao11/umbo/natural-language-object-retrieval/data/metadata/referit_imcrop_dict.json'
-test_imcrop_bbox_dict_path = '/home/andrewliao11/umbo/natural-language-object-retrieval/data/metadata/referit_imcrop_bbox_dict.json'
-test_query_path = '/home/andrewliao11/umbo/natural-language-object-retrieval/data/metadata/referit_query_dict.json'
-image_dir = '/home/andrewliao11/umbo/natural-language-object-retrieval/datasets/ReferIt/ImageCLEF/images/'
-proposal_dir = '/home/andrewliao11/umbo/natural-language-object-retrieval/data/referit_edgeboxes_top100/'
-cached_context_features_dir = '/home/andrewliao11/umbo/natural-language-object-retrieval/data/referit_context_features/'
+context_feature_path = './data/referit_context_features'
+training_data_path = './data/training/50_training_data'
+vocab_file = './data/vocabulary.txt'
+test_imlist_path = './data/split/referit_test_imlist.txt'
+test_imcrop_dict_path = './data/metadata/referit_imcrop_dict.json'
+test_imcrop_bbox_dict_path = './data/metadata/referit_imcrop_bbox_dict.json'
+test_query_path = './data/metadata/referit_query_dict.json'
+image_dir = './datasets/ReferIt/ImageCLEF/images/'
+proposal_dir = './data/referit_edgeboxes_top100/'
+cached_context_features_dir = './data/referit_context_features/'
 
 
 # Check point
 save_checkpoint_every = 25000           # how often to save a model checkpoint?
-test_model_path = '/home/andrewliao11/umbo/object_retrieval/models/wo_pretrained_v3/model-5'
+test_model_path = './test_models/wo_pretrained_v3/model-5'
 
 # Train Parameter
 dim_image = 4096
@@ -58,41 +58,6 @@ correct_IoU_threshold = 0.5
 candidate_regions = 'proposal_regions'
 K = 100
 
-def load_candidate(test_imlist, load_proposal):
-
-    candidate_boxes_dict = {imname: None for imname in test_imlist}
-    num_im = len(test_imlist)
-    for n_im in range(num_im):
-        if n_im % 1000 == 0:
-            print('loading candidate regions %d / %d' % (n_im, num_im))
-        imname = test_imlist[n_im]
-        # from edgebox
-        if load_proposal:
-            proposal_file_name = imname + '.txt'
-            boxes = np.loadtxt(proposal_dir + proposal_file_name)
-            boxes = boxes.astype(int).reshape((-1, 4))
-        # from annotated bbox
-        else:
-            boxes = [imcrop_bbox_dict[imcrop_name]
-                 for imcrop_name in imcrop_dict[imname]]
-            boxes = np.array(boxes).astype(int).reshape((-1, 4))
-        candidate_boxes_dict[imname] = boxes
-
-    return candidate_boxes_dict
-
-def load_context_feature(imname):
-
-    #context_features_dict = {imname: None for imname in test_imlist}
-    #num_im = len(test_imlist)
-    #for n_im in range(num_im):
-    #    if n_im % 1000 == 0:
-    #        print('loading contextual features %d / %d' % (n_im, num_im))
-    #    imname = test_imlist[n_im]
-    cached_context_features_file = cached_context_features_dir + imname + '_fc7.npy'
-    context_feature = np.load(cached_context_features_file).reshape((1, 4096))
-
-    return context_feature
-
 class Answer_Generator():
     def __init__(self, dim_image, dict_words, dim_hidden, batch_size, drop_out_rate, dim_coordinates, bias_init_vector=None):
         print('Initialize the model')
@@ -105,11 +70,8 @@ class Answer_Generator():
 
 	# LSTM cell
 	self.lstm_lang = rnn_cell.LSTMCell(self.dim_hidden,use_peepholes = True)
-        #self.lstm_lang_dropout = rnn_cell.DropoutWrapper(self.lstm_lang,output_keep_prob = 1-self.drop_out_rate)
 	self.lstm_context = rnn_cell.LSTMCell(self.dim_hidden,use_peepholes = True)
-        #self.lstm_context_dropout = rnn_cell.DropoutWrapper(self.lstm_context,output_keep_prob = 1-self.drop_out_rate)
 	self.lstm_local = rnn_cell.LSTMCell(self.dim_hidden,use_peepholes = True)
-        #self.lstm_local_dropout = rnn_cell.DropoutWrapper(self.lstm_local,output_keep_prob = 1-self.drop_out_rate)
 
 	# image feature embedded
 	self.embed_image_W = tf.Variable(tf.random_uniform([dim_image, self.dim_hidden], -0.1,0.1), name='embed_image_W')
@@ -153,8 +115,6 @@ class Answer_Generator():
 	state_lang = tf.zeros([self.batch_size, self.lstm_lang.state_size])
 	state_context = tf.zeros([self.batch_size, self.lstm_context.state_size])
 	state_local = tf.zeros([self.batch_size, self.lstm_local.state_size])
-	#state_langS = []
-	#output_langS = []
 	query_emb = tf.zeros([self.batch_size, self.dim_hidden])
 	for j in range(MAX_QUERY_WORDS): 
 
@@ -174,13 +134,9 @@ class Answer_Generator():
                 output_local, state_local = self.lstm_local(tf.concat(1,[local_image_emb, lang, bbox]), state_local)
             local = tf.slice(state_local, [0,0], [self.batch_size, self.dim_hidden])
 
-            #context_emb = tf.matmul(context, self.W_context)
-            #pdb.set_trace()
             context_emb = tf.nn.xw_plus_b(context, self.W_context, self.B_context)
             local_emb = tf.nn.xw_plus_b(local, self.W_local, self.B_local)
-            #local_emb = tf.matmul(local, self.W_local)
             word_pred = tf.add(context_emb, local_emb)
-            #word_pred = tf.nn.bias_add(word_pred, self.b_word_pred)
 
 	    max_prob_index = tf.argmax(word_pred, 1) # b
 
@@ -229,11 +185,9 @@ def test():
     sess = tf.InteractiveSession(config=tf.ConfigProto(allow_soft_placement=True))
     saver = tf.train.Saver()
     saver.restore(sess, test_model_path)
-    #pdb.set_trace()
  
     load_proposal = (candidate_regions == 'proposal_regions')
     candidate_boxes_dict = load_candidate(test_imlist, load_proposal)
-    #context_features_dict = load_context_feature(test_imlist)
     imcrop_dict = util.io.load_json(test_imcrop_dict_path)
     imcrop_bbox_dict = util.io.load_json(test_imcrop_bbox_dict_path)
     query_dict = util.io.load_json(test_query_path)
@@ -256,7 +210,7 @@ def test():
 
 	im = skimage.io.imread(image_dir + imname + '.jpg')
     	imsize = np.array([im.shape[1], im.shape[0]])  # [width, height]
-	local = np.load('/data2/andrewliao11/ReferIt/referit_proposal_feature/'+imname+'.npz')
+	local = np.load('./data/ReferIt/referit_proposal_feature/'+imname+'.npz')
 	local_feature = local['local_feature']
 	spatial_feats = local['spatial_feat']
 
@@ -289,19 +243,15 @@ def test():
                             tf_query_mask: current_query_mask,
                             tf_bbox: spatial_feats
                         })
-		#scores = np.asarray(scores)
 		scores = scores[0][0]
-		# TODO check if this op choose the right candidate
 		# Evaluate the correctness of top K predictions
             	topK_ids = np.argsort(-scores)[:K]
-		#pdb.set_trace()
             	topK_IoUs = IoUs[topK_ids]
             	# whether the K-th (ranking from high to low) candidate is correct
             	topK_is_correct = np.zeros(K, dtype=bool)
             	topK_is_correct[:len(topK_ids)] = (topK_IoUs >= correct_IoU_threshold)
             	# whether at least one of the top K candidates is correct
             	topK_any_correct = (np.cumsum(topK_is_correct) > 0)
-		#pdb.set_trace()
             	topK_correct_num += topK_any_correct
             	total_num += 1
 	
