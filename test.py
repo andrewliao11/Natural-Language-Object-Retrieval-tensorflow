@@ -41,7 +41,7 @@ cached_context_features_dir = './data/referit_context_features/'
 
 # Check point
 save_checkpoint_every = 25000           # how often to save a model checkpoint?
-test_model_path = './test_models/wo_pretrained_v3/model-5'
+test_model_path = './test_models/model-10'
 
 # Train Parameter
 dim_image = 4096

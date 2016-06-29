@@ -7,8 +7,6 @@
 '''
 
 from __future__ import print_function
-# import caffe before tf, or segmentation fault
-from initialize import load_caffemodel
 import tensorflow as tf
 import numpy as np
 import time
@@ -27,7 +25,7 @@ pretrain_model_path = './premodel.npz'
 
 # Check point
 save_checkpoint_every = 25000           # how often to save a model checkpoint?
-model_path = './models'
+model_path = './test_models'
 
 # Train Parameter
 dim_image = 4096
