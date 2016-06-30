@@ -42,9 +42,9 @@ Before testing, I cache the proposal feature to disk due to the RAM contraints.
 ## Experiments result
  I use R@10 to evaluate the performance and all the test is on **[ReferIt](http://tamaraberg.com/referitgame/) dataset**.   
 the performance through different epoch [without pretrained]:   
-![](https://github.com/andrewliao11/Natural-Language-Object-Retrieval_tf/blob/master/img/wo_pretrained.png?raw=true)
-the performance through different epoch [with pretrained]:   
-![](https://github.com/andrewliao11/Natural-Language-Object-Retrieval_tf/blob/master/img/w_pretrained.png?raw=true)
+![](https://github.com/andrewliao11/Natural-Language-Object-Retrieval_tf/blob/master/img/wo_pretrained.png?raw=true)   
+the performance through different epoch [with pretrained]:    
+![](https://github.com/andrewliao11/Natural-Language-Object-Retrieval_tf/blob/master/img/w_pretrained.png?raw=true)   
 And here is the loss thourgh every epoch:   
 ![](https://github.com/andrewliao11/Natural-Language-Object-Retrieval_tf/blob/master/img/loss.png?raw=true)
 
