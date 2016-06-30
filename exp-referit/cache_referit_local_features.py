@@ -15,9 +15,7 @@ from captioner import Captioner
 vgg_weights_path = './models/VGG_ILSVRC_16_layers.caffemodel'
 gpu_id = 0
 
-#image_dir = './datasets/ReferIt/ImageCLEF/images/'
 image_dir = './data/resized_imcrop'
-#cached_context_features_dir = './data/referit_context_features/'
 cached_local_features_dir = './data/referit_local_features/'
 
 image_net_proto = './prototxt/VGG_ILSVRC_16_layers_deploy.prototxt'
@@ -28,7 +26,6 @@ captioner = Captioner(vgg_weights_path, image_net_proto, lstm_net_proto, vocab_f
 batch_size = 100
 captioner.set_image_batch_size(batch_size)
 
-#imlist = util.io.load_str_list('./data/split/referit_all_imlist.txt')
 imlist = util.io.load_str_list('./data/training/train_imcrop_list.txt')
 
 num_im = len(imlist)
