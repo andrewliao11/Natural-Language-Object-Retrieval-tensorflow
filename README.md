@@ -34,11 +34,11 @@ Here, all the experiments are done on [ReferIt](http://tamaraberg.com/referitgam
 Once you prepare the data, you can run the training code ```python train.py```
 
 ## Testing
-Before testing, I cache the proposal feature to disk due to the RAM contraints.
-1. cache the proposal feature: ```python ./exp-referit/cache_edgebox_feature.py```
-2. choose which model you want to test by modifying [this line](https://github.com/andrewliao11/Natural-Language-Object-Retrieval_tf/blob/master/test.py#L44).
-3. ```python test.py```
-4. 
+Before testing, I cache the proposal feature to disk due to the RAM contraints.   
+1. cache the proposal feature: ```python ./exp-referit/cache_edgebox_feature.py```   
+2. choose which model you want to test by modifying [this line](https://github.com/andrewliao11/Natural-Language-Object-Retrieval_tf/blob/master/test.py#L44).   
+3. ```python test.py```   
+
 ## Experiments result
  I use R@10 to evaluate the performance and all the test is on **[ReferIt](http://tamaraberg.com/referitgame/) dataset**.   
 the performance through different epoch [without pretrained]:   
