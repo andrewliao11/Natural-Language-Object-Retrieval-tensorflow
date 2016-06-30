@@ -36,7 +36,7 @@ for n_im in range(num_im):
     if n_im % 200 == 0:
         print('loading image %d / %d into memory' % (n_im, num_im))
 
-    im = skimage.io.imread(image_dir + imlist[n_im] + '.jpg')
+    im = skimage.io.imread(image_dir + imlist[n_im])
     # Gray scale to RGB
     if im.ndim == 2:
         im = np.tile(im[..., np.newaxis], (1, 1, 3))

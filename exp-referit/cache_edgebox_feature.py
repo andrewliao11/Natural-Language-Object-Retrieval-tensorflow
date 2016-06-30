@@ -104,7 +104,7 @@ for n_im in range(sample_im):
 
     # Compute local descriptors (local image feature + spatial feature)
     descriptors = retriever.compute_descriptors_edgebox(captioner, im,
-                                                        candidate_boxes) # (100,4096)
+                                                        candidate_boxes,'fc7') # (100,4096)
     spatial_feats = retriever.compute_spatial_feat(candidate_boxes, imsize) # (100,8)
     np.savez('./data/ReferIt/referit_proposal_feature/'+imname, spatial_feat=spatial_feats,local_feature=descriptors)
 
