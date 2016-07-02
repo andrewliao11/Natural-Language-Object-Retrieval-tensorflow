@@ -1,4 +1,4 @@
-# Natural-Language-Object-Retrieval_tf
+# Natural Language Object Retrieval in Tensorflow
 Implement [Natural Language Object Retrieval](http://arxiv.org/abs/1511.04164) in Tensorflow. The original code is release [here](https://github.com/ronghanghu/natural-language-object-retrieval), written in Caffe.   
 note that some of the codes are from [natural-language-object-retrieval](https://github.com/ronghanghu/natural-language-object-retrieval)
 
