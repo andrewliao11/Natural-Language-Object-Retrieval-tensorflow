@@ -15,7 +15,7 @@ from captioner import Captioner
 vgg_weights_path = './models/VGG_ILSVRC_16_layers.caffemodel'
 gpu_id = 0
 
-image_dir = './data/resized_imcrop'
+image_dir = './data/resized_imcrop/'
 cached_local_features_dir = './data/referit_local_features/'
 
 image_net_proto = './prototxt/VGG_ILSVRC_16_layers_deploy.prototxt'
