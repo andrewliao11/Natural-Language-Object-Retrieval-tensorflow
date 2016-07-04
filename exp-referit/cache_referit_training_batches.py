@@ -40,12 +40,14 @@ train_pairs = []
 for imcrop_name, des in query_dict.iteritems():
 
     imname = imcrop_name.split('_', 1)[0]
+    if imname not in imset:
+        continue
     imsize = np.array(imsize_dict[imname])
     bbox = np.array(imcrop_bbox_dict[imcrop_name])
     # spatial info
     bbox_feat = retriever.compute_spatial_feat(bbox, imsize)
     context_feature = np.load(cached_context_features_dir + imname + '_fc7.npy')
-    local_feaure = np.load(cache_local_features_dir + imcrop_name + '_fc7.npy')
+    local_feaure = np.load(cache_local_features_dir + imcrop_name + '.png_fc7.npy')
     train_pairs += [(imcrop_name, d, bbox_feat, imname, context_feature, local_feature) for d in des]
     #train_pairs += [(imcrop_name, d, bbox_feat, imname, context_feature) for d in des]
 
