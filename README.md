@@ -52,4 +52,4 @@ And here is the loss thourgh every epoch:
 - [Natural language object retrieval](http://arxiv.org/abs/1511.04164), Ronghang Hu, Huazhe Xu, Marcus Rohrbach, Jiashi Feng, Kate Saenko, Trevor Darrell, cvpr2016 oral
 - [natural-language-object-retrieval](https://github.com/ronghanghu/natural-language-object-retrieval)   
 
-Feel free to contact me whenever you encounter error or something in this repo.
+Feel free to contact me whenever you encounter unexpected errors in this repo.
