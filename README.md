@@ -31,7 +31,11 @@ Here, all the experiments are done on [ReferIt](http://tamaraberg.com/referitgam
 7. Build training batches: ```python ./exp-referit/cache_referit_training_batches.py```
 
 ### Start training
-Once you prepare the data, you can run the training code ```python train.py```
+Once you prepare the data, you can run the training code ```python train.py```   
+If you want to use pretrained model, you should convert the pretrained model into ```.npy``` and load the pretrained model when training.
+```
+python initialize.py
+``` 
 
 ## Testing
 Before testing, I cache the proposal feature to disk due to the RAM contraints.   
