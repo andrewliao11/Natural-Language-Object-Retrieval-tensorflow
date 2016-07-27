@@ -25,10 +25,6 @@ T = 20  # unroll timestep of LSTM
 
 save_imcrop_list_file = './data/training/train_bbox_context_imcrop_list.txt'
 save_wholeim_list_file = './data/training/train_bbox_context_wholeim_list.txt'
-#save_hdf5_text_list_file = './data/training/train_bbox_context_hdf5_text_list.txt'
-#save_hdf5_bbox_list_file = './data/training/train_bbox_context_hdf5_bbox_list.txt'
-#save_hdf5_dir = './data/training/hdf5_50_bbox_context/'
-#save_50_dir = './data/training/50_training_data'
 
 imset = set(util.io.load_str_list(trn_imlist_file))
 vocab_dict = retriever.build_vocab_dict_from_file(vocab_file)
@@ -49,9 +45,7 @@ for imcrop_name, des in query_dict.iteritems():
     context_feature = np.load(cached_context_features_dir + imname + '_fc7.npy')
     local_feaure = np.load(cache_local_features_dir + imcrop_name + '.png_fc7.npy')
     train_pairs += [(imcrop_name, d, bbox_feat, imname, context_feature, local_feature) for d in des]
-    #train_pairs += [(imcrop_name, d, bbox_feat, imname, context_feature) for d in des]
 
-#pdb.set_trace()
 # random shuffle training pairs
 np.random.seed(3)
 perm_idx = np.random.permutation(np.arange(len(train_pairs)))
@@ -68,8 +62,6 @@ hdf5_text_list = []
 hdf5_bbox_list = []
 
 # generate hdf5 files
-#if not os.path.isdir(save_hdf5_dir):
-#    os.mkdir(save_hdf5_dir)
 for n_batch in range(num_batch):
     if (n_batch+1) % 100 == 0:
         print('writing batch %d / %d' % (n_batch+1, num_batch))
@@ -89,7 +81,6 @@ for n_batch in range(num_batch):
         # Append 0 as dummy label
         wholeim_path = image_dir + train_pairs[n_pair][3] + '.jpg 0'
         wholeim_list.append(wholeim_path)
-	#pdb.set_trace()
         stream = retriever.sentence2vocab_indices(train_pairs[n_pair][1],
                                                   vocab_dict)
 	query.append(train_pairs[n_pair][1])
@@ -103,21 +94,9 @@ for n_batch in range(num_batch):
         fc7_context[n_pair-begin, :] = train_pairs[n_pair][4]
         fc7_local[n_pair-begin, :] = train_pairs[n_pair][5]
 	
-    #h5_text_filename = save_hdf5_dir + 'text_%d_to_%d.h5' % (begin, end)
-    #h5_bbox_filename = save_hdf5_dir + 'bbox_context_%d_to_%d.h5' % (begin, end)
     h5_training_filename = './data/training/50_training_data/' + 'training_%d_to_%d' % (begin, end)
-    #h5_bbox_filename = '/home/andrewliao11/umbo/natural-language-object-retrieval/data/training/50_bbox/' + 'bbox_context_%d_to_%d.h5' % (begin, end)
-    #retriever.write_batch_to_hdf5(h5_text_filename, cont_sentences,
-    #                              input_sentences, target_sentences)
-    #retriever.write_batch_to_hdf5(h5_text_filename, stream)
-    #pdb.set_trace()
-    #retriever.write_bbox_context_to_hdf5(h5_bbox_filename, bbox_coordinates,
-    #                                     fc7_context)
     np.savez(h5_training_filename, raw_query=query, bbox_coordinates = bbox_coordinates, fc7_context = fc7_context, fc7_local = fc7_local)
-    #hdf5_training_list.append(h5_text_filename)
-    #hdf5_bbox_list.append(h5_bbox_filename)
+
 
 util.io.save_str_list(imcrop_list, save_imcrop_list_file)
 util.io.save_str_list(wholeim_list, save_wholeim_list_file)
-#util.io.save_str_list(hdf5_text_list, save_hdf5_text_list_file)
-#util.io.save_str_list(hdf5_bbox_list, save_hdf5_bbox_list_file)
