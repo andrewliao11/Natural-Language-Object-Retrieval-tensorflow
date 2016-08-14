@@ -1,8 +1,3 @@
-'''
-Using gradient clipping
-'''
-
-
 from __future__ import print_function
 # import caffe before tf, or segmentation fault
 #from initialize import load_caffemodel
@@ -22,7 +17,7 @@ import util
 import skimage.io
 from keras.preprocessing import sequence
 
-gpu_id = 1
+gpu_id = 2
 sample_im = 100
 
 # path
@@ -40,7 +35,7 @@ cached_context_features_dir = './data/referit_context_features/'
 
 # Check point
 save_checkpoint_every = 25000           # how often to save a model checkpoint?
-test_model_path = './test_models/model-0'
+test_model_path = './test_models/model-1'
 
 # Train Parameter
 dim_image = 4096
@@ -60,10 +55,9 @@ K = 100
 def load_candidate(test_imlist, load_proposal):
 
     candidate_boxes_dict = {imname: None for imname in test_imlist}
-    num_im = len(test_imlist)
-    for n_im in range(num_im):
+    for n_im in range(sample_im):
         if n_im % 1000 == 0:
-            print('loading candidate regions %d / %d' % (n_im, num_im))
+            print('loading candidate regions %d / %d' % (n_im, sample_im))
         imname = test_imlist[n_im]
         # from edgebox
         if load_proposal:
@@ -234,7 +228,7 @@ def test():
 
     for n_im in range(sample_im):
 
-	print('Testing image %d / %d' % (n_im, num_im))
+	print('Testing image %d / %d' % (n_im, sample_im))
 	imname = test_imlist[n_im]
 	#print ('Load context feature')
 	context_features = load_context_feature(imname)
