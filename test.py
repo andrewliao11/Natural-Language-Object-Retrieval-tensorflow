@@ -14,7 +14,6 @@ from captioner import Captioner
 import tensorflow as tf
 import numpy as np
 import time
-from tensorflow.models.rnn import rnn_cell
 import retriever
 import os, argparse
 import pdb
@@ -23,7 +22,7 @@ import util
 import skimage.io
 from keras.preprocessing import sequence
 
-gpu_id = 0
+gpu_id = 1
 sample_im = 100
 
 # path
@@ -41,7 +40,7 @@ cached_context_features_dir = './data/referit_context_features/'
 
 # Check point
 save_checkpoint_every = 25000           # how often to save a model checkpoint?
-test_model_path = './test_models/model-10'
+test_model_path = './test_models/model-0'
 
 # Train Parameter
 dim_image = 4096
@@ -58,6 +57,42 @@ correct_IoU_threshold = 0.5
 candidate_regions = 'proposal_regions'
 K = 100
 
+def load_candidate(test_imlist, load_proposal):
+
+    candidate_boxes_dict = {imname: None for imname in test_imlist}
+    num_im = len(test_imlist)
+    for n_im in range(num_im):
+        if n_im % 1000 == 0:
+            print('loading candidate regions %d / %d' % (n_im, num_im))
+        imname = test_imlist[n_im]
+        # from edgebox
+        if load_proposal:
+            proposal_file_name = imname + '.txt'
+            boxes = np.loadtxt(proposal_dir + proposal_file_name)
+            boxes = boxes.astype(int).reshape((-1, 4))
+        # from annotated bbox
+        else:
+            boxes = [imcrop_bbox_dict[imcrop_name]
+                 for imcrop_name in imcrop_dict[imname]]
+            boxes = np.array(boxes).astype(int).reshape((-1, 4))
+        candidate_boxes_dict[imname] = boxes
+
+    return candidate_boxes_dict
+
+def load_context_feature(imname):
+
+    #context_features_dict = {imname: None for imname in test_imlist}
+    #num_im = len(test_imlist)
+    #for n_im in range(num_im):
+    #    if n_im % 1000 == 0:
+    #        print('loading contextual features %d / %d' % (n_im, num_im))
+    #    imname = test_imlist[n_im]
+    cached_context_features_file = cached_context_features_dir + imname + '_fc7.npy'
+    context_feature = np.load(cached_context_features_file).reshape((1, 4096))
+
+    return context_feature
+
+
 class Answer_Generator():
     def __init__(self, dim_image, dict_words, dim_hidden, batch_size, drop_out_rate, dim_coordinates, bias_init_vector=None):
         print('Initialize the model')
@@ -69,9 +104,9 @@ class Answer_Generator():
 	self.dim_coordinates = dim_coordinates
 
 	# LSTM cell
-	self.lstm_lang = rnn_cell.LSTMCell(self.dim_hidden,use_peepholes = True)
-	self.lstm_context = rnn_cell.LSTMCell(self.dim_hidden,use_peepholes = True)
-	self.lstm_local = rnn_cell.LSTMCell(self.dim_hidden,use_peepholes = True)
+	self.lstm_lang = tf.nn.rnn_cell.LSTMCell(self.dim_hidden,use_peepholes = True)
+	self.lstm_context = tf.nn.rnn_cell.LSTMCell(self.dim_hidden,use_peepholes = True)
+	self.lstm_local = tf.nn.rnn_cell.LSTMCell(self.dim_hidden,use_peepholes = True)
 
 	# image feature embedded
 	self.embed_image_W = tf.Variable(tf.random_uniform([dim_image, self.dim_hidden], -0.1,0.1), name='embed_image_W')
@@ -210,7 +245,7 @@ def test():
 
 	im = skimage.io.imread(image_dir + imname + '.jpg')
     	imsize = np.array([im.shape[1], im.shape[0]])  # [width, height]
-	local = np.load('./data/ReferIt/referit_proposal_feature/'+imname+'.npz')
+	local = np.load('./data/referit_proposal_feature/'+imname+'.npz')
 	local_feature = local['local_feature']
 	spatial_feats = local['spatial_feat']
 
