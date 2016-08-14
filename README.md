@@ -3,7 +3,7 @@ Implement [Natural Language Object Retrieval](http://arxiv.org/abs/1511.04164) i
 note that some of the codes are from [natural-language-object-retrieval](https://github.com/ronghanghu/natural-language-object-retrieval)
 
 ## What is natural language object retrieval?
-In real AI, you may refer something with its location, color, or other charateritic. The AI robot should know where the corresponding object is. Here's the illustration:   
+In real AI, you may refer something with its location, color, or other characteristic. The AI robot should know where the corresponding object is. Here's the illustration:   
 ![ill](https://github.com/andrewliao11/Natural-Language-Object-Retrieval_tf/blob/master/img/illustration.png?raw=true)   
 The blue box represents the ground truth, while the yellow stands for positive recall, red for negative recall.
    
