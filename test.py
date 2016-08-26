@@ -2,10 +2,6 @@ from __future__ import print_function
 # import caffe before tf, or segmentation fault
 #from initialize import load_caffemodel
 import sys
-sys.path.append('./external/caffe-natural-language-object-retrieval/python/')
-sys.path.append('./external/caffe-natural-language-object-retrieval/examples/coco_caption/')
-import caffe
-from captioner import Captioner
 import tensorflow as tf
 import numpy as np
 import time
