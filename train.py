@@ -10,7 +10,7 @@ from __future__ import print_function
 import tensorflow as tf
 import numpy as np
 import time
-from tensorflow.models.rnn import rnn_cell
+#from tensorflow.models.rnn import rnn_cell
 import retriever
 import os
 import pdb
@@ -52,12 +52,12 @@ class Answer_Generator():
 	self.dim_coordinates = dim_coordinates
 
 	# LSTM cell
-	self.lstm_lang = rnn_cell.LSTMCell(self.dim_hidden,use_peepholes = True)
-        #self.lstm_lang_dropout = rnn_cell.DropoutWrapper(self.lstm_lang,output_keep_prob = 1-self.drop_out_rate)
-	self.lstm_context = rnn_cell.LSTMCell(self.dim_hidden,use_peepholes = True)
-        #self.lstm_context_dropout = rnn_cell.DropoutWrapper(self.lstm_context,output_keep_prob = 1-self.drop_out_rate)
-	self.lstm_local = rnn_cell.LSTMCell(self.dim_hidden,use_peepholes = True)
-        #self.lstm_local_dropout = rnn_cell.DropoutWrapper(self.lstm_local,output_keep_prob = 1-self.drop_out_rate)
+	self.lstm_lang = tf.nn.rnn_cell.LSTMCell(self.dim_hidden,use_peepholes = True,state_is_tuple=False)
+        #self.lstm_lang_dropout = tf.nn.rnn_cell.DropoutWrapper(self.lstm_lang,output_keep_prob = 1-self.drop_out_rate)
+	self.lstm_context = tf.nn.rnn_cell.LSTMCell(self.dim_hidden,use_peepholes = True,state_is_tuple=False)
+        #self.lstm_context_dropout = tf.nn.rnn_cell.DropoutWrapper(self.lstm_context,output_keep_prob = 1-self.drop_out_rate)
+	self.lstm_local = tf.nn.rnn_cell.LSTMCell(self.dim_hidden,use_peepholes = True,state_is_tuple=False)
+        #self.lstm_local_dropout = tf.nn.rnn_cell.DropoutWrapper(self.lstm_local,output_keep_prob = 1-self.drop_out_rate)
 
 	# image feature embedded
 	self.embed_image_W = tf.Variable(tf.random_uniform([dim_image, self.dim_hidden], -0.1,0.1), name='embed_image_W')
@@ -194,11 +194,11 @@ def train():
     #train_op = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(tf_loss)
     tf.initialize_all_variables().run()
        
-    print ('Load pretrained model')
-    pretrain = np.load(pretrain_model_path) 
-    for row in tf_param:
-        assign_op = row.assign(pretrain[re.split(':', row.name)[0].replace('/','8')])
-        sess.run(assign_op)
+    #print ('Load pretrained model')
+    #pretrain = np.load(pretrain_model_path) 
+    #for row in tf_param:
+    #    assign_op = row.assign(pretrain[re.split(':', row.name)[0].replace('/','8')])
+    #    sess.run(assign_op)
 
     tStart_total = time.time()
     for epoch in range(n_epochs):

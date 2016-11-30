@@ -13,15 +13,15 @@ UNK_IDENTIFIER = '<unk>' # <unk> is the word used to identify unknown words
 SENTENCE_SPLIT_REGEX = re.compile(r'(\W+)')
 def sentence2vocab_indices(raw_sentence, vocab_dict):
     #splits = SENTENCE_SPLIT_REGEX.split(raw_sentence)
-    pdb.set_trace()
+    #pdb.set_trace()
     sentence = [ s.lower() for s in raw_sentence if len(s) > 0 ]
-    pdb.set_trace()
+    #pdb.set_trace()
     # remove .
     if sentence[-1] == '.':
         sentence = sentence[:-1]
     vocab_indices = [ (vocab_dict[s] if vocab_dict.has_key(s) else vocab_dict[UNK_IDENTIFIER])
         for s in sentence ]
-    pdb.set_trace()
+    #pdb.set_trace()
     if len(vocab_indices) > MAX_WORDS:
         vocab_indices = vocab_indices[:MAX_WORDS]
     return vocab_indices

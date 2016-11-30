@@ -42,9 +42,11 @@ for imcrop_name, des in query_dict.iteritems():
     bbox = np.array(imcrop_bbox_dict[imcrop_name])
     # spatial info
     bbox_feat = retriever.compute_spatial_feat(bbox, imsize)
-    context_feature = np.load(cached_context_features_dir + imname + '_fc7.npy')
-    local_feaure = np.load(cache_local_features_dir + imcrop_name + '.png_fc7.npy')
-    train_pairs += [(imcrop_name, d, bbox_feat, imname, context_feature, local_feature) for d in des]
+    if os.path.isfile(cached_context_features_dir + imname + '_fc7.npy'):
+        context_feature = np.load(cached_context_features_dir + imname + '_fc7.npy')
+        if os.path.isfile(cached_local_features_dir + imcrop_name + '.png_fc7.npy'):
+            local_feature = np.load(cached_local_features_dir + imcrop_name + '.png_fc7.npy')
+            train_pairs += [(imcrop_name, d, bbox_feat, imname, context_feature, local_feature) for d in des]
 
 # random shuffle training pairs
 np.random.seed(3)
